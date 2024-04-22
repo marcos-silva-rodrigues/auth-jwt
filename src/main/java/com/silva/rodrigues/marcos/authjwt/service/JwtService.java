@@ -24,8 +24,8 @@ public class JwtService {
       var algoritmo = Algorithm.HMAC256(secret);
       var expirationDate = generateExpirationDate();
       var token = JWT.create()
-
-              .withSubject(usuario.getId().toString())
+              .withIssuer("API authjwt")
+              .withSubject(usuario.getUsername())
               .withExpiresAt(expirationDate)
               .sign(algoritmo);
 
@@ -37,5 +37,18 @@ public class JwtService {
 
   private Instant generateExpirationDate() {
     return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+  }
+
+  public String getSubject(String tokenValue) {
+    try {
+      Algorithm algorithm = Algorithm.HMAC256(secret);
+      return JWT.require(algorithm)
+              .withIssuer("API authjwt")
+              .build()
+              .verify(tokenValue)
+              .getSubject();
+    } catch (JWTVerificationException exception){
+      throw new RuntimeException("Token JWT inválido ou expirado");
+    }
   }
 }

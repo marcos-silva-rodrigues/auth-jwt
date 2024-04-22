@@ -1,5 +1,6 @@
 package com.silva.rodrigues.marcos.authjwt.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class ConfigSecurity {
+
+  private JwtFilter jwtFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -27,6 +32,7 @@ public class ConfigSecurity {
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .anyRequest().authenticated())
             .headers((headers) -> headers.frameOptions((frame) -> frame.sameOrigin()))
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
   }
 
