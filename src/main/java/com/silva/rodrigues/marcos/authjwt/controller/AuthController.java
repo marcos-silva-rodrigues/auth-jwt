@@ -30,9 +30,9 @@ public class AuthController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<User> create(@Valid @RequestBody CreateUserDto createUserDto) {
+  public ResponseEntity<UserDto> create(@Valid @RequestBody CreateUserDto createUserDto) {
     User user = userService.create(createUserDto);
-    return ResponseEntity.of(Optional.of(user));
+    return ResponseEntity.of(Optional.of(new UserDto(user)));
   }
 
   @GetMapping("/me")
