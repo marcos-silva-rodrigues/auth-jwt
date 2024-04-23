@@ -1,5 +1,6 @@
 package com.silva.rodrigues.marcos.authjwt.config;
 
+import com.silva.rodrigues.marcos.authjwt.model.UserDetailsImpl;
 import com.silva.rodrigues.marcos.authjwt.repository.UserRepository;
 import com.silva.rodrigues.marcos.authjwt.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -31,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
       var user = repository.findByUsername(username);
 
       if(user.isPresent()) {
-        var principal = user.get();
+        var principal = new UserDetailsImpl(user.get());
         var authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

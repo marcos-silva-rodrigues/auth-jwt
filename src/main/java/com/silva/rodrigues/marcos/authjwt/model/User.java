@@ -18,7 +18,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,28 +33,5 @@ public class User implements UserDetails {
   @Column(nullable = false)
   private String bio;
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return new ArrayList<>();
-  }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
-
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return true;
-  }
 }

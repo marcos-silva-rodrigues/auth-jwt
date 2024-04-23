@@ -19,13 +19,13 @@ public class JwtService {
   @Value("${api.security.token.secret}")
   private String secret;
 
-  public TokenDto generateToken(User usuario) {
+  public TokenDto generateToken(String username) {
     try {
       var algoritmo = Algorithm.HMAC256(secret);
       var expirationDate = generateExpirationDate();
       var token = JWT.create()
               .withIssuer("API authjwt")
-              .withSubject(usuario.getUsername())
+              .withSubject(username)
               .withExpiresAt(expirationDate)
               .sign(algoritmo);
 

@@ -2,9 +2,9 @@ package com.silva.rodrigues.marcos.authjwt.service;
 
 import com.silva.rodrigues.marcos.authjwt.dto.CreateUserDto;
 import com.silva.rodrigues.marcos.authjwt.model.User;
+import com.silva.rodrigues.marcos.authjwt.model.UserDetailsImpl;
 import com.silva.rodrigues.marcos.authjwt.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,8 +27,10 @@ public class UserService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepository.findByUsername(username)
+  public UserDetailsImpl loadUserByUsername(String username) throws UsernameNotFoundException {
+    var user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+    return new UserDetailsImpl(user);
   }
 }
