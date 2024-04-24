@@ -1,6 +1,7 @@
 package com.silva.rodrigues.marcos.authjwt.service;
 
 import com.silva.rodrigues.marcos.authjwt.dto.TaskDto;
+import com.silva.rodrigues.marcos.authjwt.exception.TaskNotFoundException;
 import com.silva.rodrigues.marcos.authjwt.model.Task;
 import com.silva.rodrigues.marcos.authjwt.model.User;
 import com.silva.rodrigues.marcos.authjwt.repository.TaskRepository;
@@ -25,7 +26,7 @@ public class TaskService {
     return new TaskDto(taskPersisted);
   }
 
-  public TaskDto get(Long id, User user) throws RuntimeException {
+  public TaskDto get(Long id, User user) throws TaskNotFoundException {
     var task = getTask(id, user);
 
     return new TaskDto(task);
@@ -39,16 +40,16 @@ public class TaskService {
             .map(TaskDto::new);
   }
 
-  public void makeComplete(Long id, User user) throws RuntimeException {
+  public void makeComplete(Long id, User user) throws TaskNotFoundException {
     var task = getTask(id, user);
     task.makeComplete();
     repository.save(task);
   }
 
 
-  private Task getTask(Long id, User user) {
+  private Task getTask(Long id, User user) throws TaskNotFoundException {
     return repository.findByIdAndUserId(user.getId(), id)
-            .orElseThrow(() -> new RuntimeException("Task not found"));
+            .orElseThrow(() -> new TaskNotFoundException(id));
   }
 
 }

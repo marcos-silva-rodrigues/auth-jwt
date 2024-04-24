@@ -1,6 +1,7 @@
 package com.silva.rodrigues.marcos.authjwt.service;
 
 import com.silva.rodrigues.marcos.authjwt.dto.CreateUserDto;
+import com.silva.rodrigues.marcos.authjwt.exception.UsernameAlreadyExistsException;
 import com.silva.rodrigues.marcos.authjwt.model.User;
 import com.silva.rodrigues.marcos.authjwt.model.UserDetailsImpl;
 import com.silva.rodrigues.marcos.authjwt.repository.UserRepository;
@@ -18,6 +19,10 @@ public class UserService implements UserDetailsService {
   private PasswordEncoder passwordEncoder;
 
   public User create(CreateUserDto dto) {
+    var alreadyExists = userRepository.existsByUsername(dto.username());
+    if (alreadyExists) {
+      throw new UsernameAlreadyExistsException(dto.username());
+    }
     var newUser = new User();
     newUser.setUsername(dto.username());
     newUser.setPassword(passwordEncoder.encode(dto.password()));

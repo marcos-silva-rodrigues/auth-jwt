@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.silva.rodrigues.marcos.authjwt.dto.TokenDto;
+import com.silva.rodrigues.marcos.authjwt.exception.InvalidJwtException;
 import com.silva.rodrigues.marcos.authjwt.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class JwtService {
     return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
   }
 
-  public String getSubject(String tokenValue) {
+  public String getSubject(String tokenValue) throws InvalidJwtException {
     try {
       Algorithm algorithm = Algorithm.HMAC256(secret);
       return JWT.require(algorithm)
@@ -48,7 +49,7 @@ public class JwtService {
               .verify(tokenValue)
               .getSubject();
     } catch (JWTVerificationException exception){
-      throw new RuntimeException("Token JWT inválido ou expirado");
+      throw new InvalidJwtException();
     }
   }
 }

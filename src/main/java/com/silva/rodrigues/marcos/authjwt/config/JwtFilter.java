@@ -1,5 +1,6 @@
 package com.silva.rodrigues.marcos.authjwt.config;
 
+import com.silva.rodrigues.marcos.authjwt.exception.InvalidJwtException;
 import com.silva.rodrigues.marcos.authjwt.model.UserDetailsImpl;
 import com.silva.rodrigues.marcos.authjwt.repository.UserRepository;
 import com.silva.rodrigues.marcos.authjwt.service.JwtService;
@@ -23,23 +24,29 @@ public class JwtFilter extends OncePerRequestFilter {
   private UserRepository repository;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, InvalidJwtException {
     var tokenJWT = getToken(request);
-    if (tokenJWT != null) {
-      System.out.println(tokenJWT);
-      var username = jwtService.getSubject(tokenJWT);
-      System.out.println(username);
+    if (tokenJWT == null) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    try {
+      String username = jwtService.getSubject(tokenJWT);
       var user = repository.findByUsername(username);
 
       if(user.isPresent()) {
+
         var principal = new UserDetailsImpl(user.get());
         var authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }
+    } catch (InvalidJwtException e) {
+      // ignore exception
+    } finally {
+      filterChain.doFilter(request, response);
     }
-
-    filterChain.doFilter(request, response);
   }
 
   private String getToken(HttpServletRequest request) {
