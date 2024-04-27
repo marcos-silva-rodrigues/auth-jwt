@@ -33,7 +33,7 @@ public class ConfigSecurity {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
                     .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD).permitAll()
-
+                    .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
                     .requestMatchers("/login", "/create").permitAll()
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .anyRequest().authenticated())
